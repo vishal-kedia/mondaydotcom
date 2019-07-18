@@ -1,0 +1,21 @@
+{
+  "name": "mondaydotcom",
+  "version": "1.0.0",
+  "description": "Set of functions to play with monday API's",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Vishal Kedia",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.10.0",
+    "eslint-config-google": "^0.11.0",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-plugin-prettier": "^3.0.0",
+    "prettier": "^1.15.3"
+  }
+}
