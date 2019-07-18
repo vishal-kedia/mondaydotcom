@@ -4,11 +4,11 @@ module.exports = function(_config) {
     throw "configuration doesn't have valid params : `monday_url` and `api_key`";
   }
 
-  if(typeof _config.monday_url === 'string') {
+  if(typeof _config.monday_url !== 'string') {
     throw "invalid value type for `monday_url`";
   }
 
-  if(typeof _config.api_key === 'string') {
+  if(typeof _config.api_key !== 'string') {
     throw "invalid value type for `api_key`";
   }
 
@@ -106,7 +106,7 @@ module.exports = function(_config) {
     axios({
       method: "GET",
       url: `${this.config.monday_url}/v1/boards/${boardId}.json?api_key=${
-        config.api_key
+        this.config.api_key
       }`
     }).then(function(response) {
       fetchBoardPulses(response.data, 1, [], func);
@@ -121,7 +121,7 @@ module.exports = function(_config) {
     axios({
       method: "GET",
       url: `${this.config.monday_url}/v1/boards.json?per_page=${100}&api_key=${
-        config.api_key
+        this.config.api_key
       }`
     }).then(function(response) {
       response.data.forEach(function(board){
