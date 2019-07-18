@@ -42,8 +42,9 @@ module.exports = function(_config) {
   };
   
   this.pulseToColumnValues = function(columns, pulse) {
+    var self = this;
     return pulse.column_values.reduce(function(pulseValues, columnValue) {
-      pulseValues[columnValue.cid] = resolveColumnValue(
+      pulseValues[columnValue.cid] = self.resolveColumnValue(
         columns[columnValue.cid],
         columnValue
       );
@@ -58,9 +59,9 @@ module.exports = function(_config) {
     }, {});
   };
   
-  this.printBoard = function(board, pulses) {
-    let pulsesByGroup = clusterPulsesByGroup(pulses);
-    let columns = transformColumnListToMap(board.columns);
+  this.printBoard = function(_self,board, pulses) {
+    let pulsesByGroup = _self.clusterPulsesByGroup(pulses);
+    let columns = _self.transformColumnListToMap(board.columns);
     let columnKeys = Object.keys(columns);
     console.log(board.name);
     console.log("===================");
@@ -76,7 +77,7 @@ module.exports = function(_config) {
       console.log(heading);
       console.log(headingSeperator);
       pulsesByGroup[key].forEach(function(pulse) {
-        let pulseValue = pulseToColumnValues(columns, pulse);
+        let pulseValue = _self.pulseToColumnValues(columns, pulse);
         console.log(
           columnKeys.reduce(function(line, key) {
             return line + pulseValue[key] + "|";
@@ -87,6 +88,7 @@ module.exports = function(_config) {
   };
   
   this.fetchBoardPulses = function(board, pageNo, pulses, func) {
+    var self = this;
     axios({
       method: "GET",
       url: `${this.config.monday_url}/v1/boards/${
@@ -95,22 +97,25 @@ module.exports = function(_config) {
     }).then(function(response) {
       pulses = pulses.concat(response.data);
       if (response["data"].length < 25) {
-        func(board, pulses);
+        func(self,board, pulses);
       } else {
-        fetchBoardPulses(board, pageNo + 1, pulses, func);
+        self.fetchBoardPulses(board, pageNo + 1, pulses, func);
       }
     });
   };
   
   this.fetchBoard = function(boardId, func) {
+    var self = this;
+    var _responseHandler = function(response) {
+      self.fetchBoardPulses(response.data, 1, [], func);
+    };
+
     axios({
       method: "GET",
       url: `${this.config.monday_url}/v1/boards/${boardId}.json?api_key=${
         this.config.api_key
       }`
-    }).then(function(response) {
-      fetchBoardPulses(response.data, 1, [], func);
-    });
+    }).then(_responseHandler);
   };
 
   this.fetchAndPrintBoard = function(boardId) {
