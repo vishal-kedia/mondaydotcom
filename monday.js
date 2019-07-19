@@ -1,4 +1,3 @@
-//import { table} from "table";
 const _table = require("table");
 const _axios = require("axios");
 module.exports = function(_config) {
@@ -20,7 +19,7 @@ module.exports = function(_config) {
             "Authorization" : _config.auth_token
         }
     });
-    this.fetchBoard = function(boardId) {
+    this.fetchBoard = function(boardId,user) {
         this.axios.post("",{
             query : `{boards(ids:[${boardId}]){id name groups {id title} columns {id title type} items {name group {id} column_values {id text}}}}`
         }).then(function(response){
@@ -44,7 +43,15 @@ module.exports = function(_config) {
                     row.push(item.column_values.filter( column_value => column_value.id === column_id).map( column_value => column_value.text)[0]);
                   }
                 });
-                group_tables[item.group.id].push(row);
+                if(user) {
+                  if(row.some(function(_val){
+                    return _val.includes(user)
+                  })) {
+                    group_tables[item.group.id].push(row);
+                  }
+                } else {
+                  group_tables[item.group.id].push(row);
+                }
               });
               console.log(board.name);
               console.log('-----------------------')
