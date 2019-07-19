@@ -1,4 +1,5 @@
 const _table = require("table");
+const fs = require("fs");
 const _axios = require("axios");
 module.exports = function(_config) {
     if(_config === undefined || !_config.hasOwnProperty("monday_url") || !_config.hasOwnProperty("auth_token")) {
@@ -65,33 +66,13 @@ module.exports = function(_config) {
                     width: 40
                   }
                 }
-                if(column_id === 'person') {
-                  options.columns[index] = {
-                    width: 25
-                  }
-                }
-                if(column_id === 'status') {
-                  options.columns[index] = {
-                    width: 20
-                  }
-                }
-                if(column_id === 'dependency') {
-                  options.columns[index] = {
-                    width: 20
-                  }
-                }
-                if(column_id === 'tags') {
-                  options.columns[index] = {
-                    width: 12
-                  }
-                }
               });
+
               board.groups.forEach(function(group){
                 console.log(`${group.title}`);
                 console.log(_table.table(group_tables[group.id],options));
               });
             });
-            
         }).catch(function(error){
             console.log(error);
         });
