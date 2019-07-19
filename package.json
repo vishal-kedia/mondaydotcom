@@ -2,14 +2,15 @@
   "name": "mondaydotcom",
   "version": "1.0.0",
   "description": "Set of functions to play with monday API's",
-  "main": "index.js",
+  "main": "monday.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Vishal Kedia",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.18.0"
+    "axios": "^0.18.0",
+    "table": "^5.4.4"
   },
   "devDependencies": {
     "eslint": "^5.10.0",
