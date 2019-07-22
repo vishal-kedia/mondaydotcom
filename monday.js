@@ -22,7 +22,7 @@ module.exports = function(_config) {
     });
     this.fetchBoard = function(boardId,user) {
         this.axios.post("",{
-            query : `{boards(ids:[${boardId}]){id name groups {id title} columns {id title type} items {name group {id} column_values {id text}}}}`
+            query : `{boards(ids:[${boardId}]){id name groups {id title} columns {id title type} items {id name group {id} column_values {id text}}}}`
         }).then(function(response){
             response["data"]["data"]["boards"].forEach(function(board){
               let group_tables = {};
@@ -35,6 +35,15 @@ module.exports = function(_config) {
               board.groups.forEach(function(group){
                 group_tables[group.id] = [group_column_names];
               });
+              board.items.sort(function(a,b){
+                if(a.id > b.id) {
+                  return -1;
+                } else if (a.id < b.id) {
+                  return 1;
+                } else {
+                  return 0;
+                }
+              })
               board.items.forEach(function(item){
                 let row = [];
                 group_column_ids.forEach(function(column_id){
