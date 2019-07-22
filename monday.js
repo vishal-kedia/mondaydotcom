@@ -26,8 +26,8 @@ module.exports = function(_config) {
         }).then(function(response){
             response["data"]["data"]["boards"].forEach(function(board){
               let group_tables = {};
-              let group_column_ids = [];
-              let group_column_names = [];
+              let group_column_ids = ['_id'];
+              let group_column_names = ['_id'];
               board.columns.forEach(function(column){
                 group_column_ids.push(column.id);
                 group_column_names.push(column.title);
@@ -49,7 +49,9 @@ module.exports = function(_config) {
                 group_column_ids.forEach(function(column_id){
                   if(column_id === 'name') {
                     row.push(item.name);
-                  } else {
+                  } else if (column_id === '_id') {
+		  	row.push(item.id);
+		  } else {
                     row.push(item.column_values.filter( column_value => column_value.id === column_id).map( column_value => column_value.text)[0]);
                   }
                 });
