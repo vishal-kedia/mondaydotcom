@@ -20,7 +20,7 @@ module.exports = function(_config) {
             "Authorization" : _config.auth_token
         }
     });
-    this.fetchBoard = function(boardId,user) {
+    this.fetchBoard = function(boardId,filters) {
         this.axios.post("",{
             query : `{boards(ids:[${boardId}]){id name groups {id title} columns {id title type} items {id name group {id} column_values {id text}}}}`
         }).then(function(response){
@@ -55,9 +55,11 @@ module.exports = function(_config) {
                     row.push(item.column_values.filter( column_value => column_value.id === column_id).map( column_value => column_value.text)[0]);
                   }
                 });
-                if(user) {
-                  if(row.some(function(_val){
-                    return _val.includes(user)
+                if(filters) {
+                  if(filters.every(function(filter){
+			  row.some(function(_val){
+                    		return _val.includes(filter)
+		  	})
                   })) {
                     group_tables[item.group.id].push(row);
                   }
