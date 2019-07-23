@@ -20,11 +20,7 @@ module.exports = function(_config) {
             "Authorization" : _config.auth_token
         }
     });
-    this.fetchBoard = function(boardId,filters) {
-        this.axios.post("",{
-            query : `{boards(ids:[${boardId}]){id name groups {id title} columns {id title type} items {id name group {id} column_values {id text}}}}`
-        }).then(function(response){
-            response["data"]["data"]["boards"].forEach(function(board){
+    const renderBoard = function(board,filters){
                 let group_tables = {};
                 let group_column_ids = ['_id'];
                 let group_column_names = ['_id'];
@@ -85,7 +81,22 @@ module.exports = function(_config) {
                     console.log(`${group.title}`);
                     console.log(_table.table(group_tables[group.id],options));
                 });
-            });
+    };
+    this.fetchAndPrintBoard = function(boardId,filters) {
+        this.axios.post("",{
+            query : `{boards(ids:[${boardId}]){id name groups {id title} columns {id title type} items {id name group {id} column_values {id text}}}}`
+        }).then(function(response){
+            response["data"]["data"]["boards"].forEach(board => renderBoard(board,filters));
+        }).catch(function(error){
+            console.log(error);
+        });
+    }
+    this.printBoard = renderBoard;
+    this.fetchAndProcessBoard = function(boardId,filters,func) {
+        this.axios.post("",{
+            query : `{boards(ids:[${boardId}]){id name groups {id title} columns {id title type} items {id name group {id} column_values {id text}}}}`
+        }).then(function(response){
+            response["data"]["data"]["boards"].forEach(board => func(board,filters));
         }).catch(function(error){
             console.log(error);
         });
