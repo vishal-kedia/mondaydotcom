@@ -105,7 +105,7 @@ module.exports = function(_config) {
     this.axios.post("",{
       query : `{boards(ids:[${boardId}]){id name groups {id title} columns {id title type} items {id name group {id} column_values {id text}}}}`
     }).then(function(response){
-      response["data"]["data"]["boards"].forEach(board => func(board,filters));
+      response["data"]["data"]["boards"].forEach(board => func(board,filters,columnFilters));
     }).catch(function(error){
       console.log(error);
     });
