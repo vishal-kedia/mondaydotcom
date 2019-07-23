@@ -20,13 +20,20 @@ module.exports = function(_config) {
       "Authorization" : _config.auth_token
     }
   });
-  const renderBoard = function(board,filters){
+  const renderBoard = function(board,filters,columnFilters){
     let group_tables = {};
     let group_column_ids = ['_id'];
     let group_column_names = ['_id'];
     board.columns.forEach(function(column){
-      group_column_ids.push(column.id);
-      group_column_names.push(column.title);
+      if(columnFilters) {
+        if(columnFilters.some(_cf => column.title.includes(_cf))){
+          group_column_ids.push(column.id);
+          group_column_names.push(column.title);
+        }
+      } else {
+        group_column_ids.push(column.id);
+        group_column_names.push(column.title);
+      }
     });
     board.groups.forEach(function(group){
       group_tables[group.id] = [group_column_names];
@@ -48,14 +55,15 @@ module.exports = function(_config) {
         } else if (column_id === '_id') {
 		  	  row.push(item.id);
 		    } else {
-          row.push(item.column_values.filter( column_value => column_value.id === column_id).map( column_value => column_value.text)[0]);
+	  var data = item.column_values.filter( column_value => column_value.id === column_id).map( column_value => column_value.text)[0];
+          row.push(data);
         }
       });
       if(filters) {
         if(filters.every(function(filter){
-			    return row.some(function(_val){
-            return _val.includes(filter)
-		  	  })
+        		    return item.column_values.some(function(_val){
+            return _val.text.includes(filter)
+        	  	  })
         })) {
           group_tables[item.group.id].push(row);
         }
@@ -79,20 +87,21 @@ module.exports = function(_config) {
 
     board.groups.forEach(function(group){
       console.log(`${group.title}`);
+      //console.log(group_tables[group.id]);
       console.log(_table.table(group_tables[group.id],options));
     });
   };
-  this.fetchAndPrintBoard = function(boardId,filters) {
+  this.fetchAndPrintBoard = function(boardId,filters,columnFilters) {
     this.axios.post("",{
       query : `{boards(ids:[${boardId}]){id name groups {id title} columns {id title type} items {id name group {id} column_values {id text}}}}`
     }).then(function(response){
-      response["data"]["data"]["boards"].forEach(board => renderBoard(board,filters));
+      response["data"]["data"]["boards"].forEach(board => renderBoard(board,filters,columnFilters));
     }).catch(function(error){
       console.log(error);
     });
   }
   this.printBoard = renderBoard;
-  this.fetchAndProcessBoard = function(boardId,filters,func) {
+  this.fetchAndProcessBoard = function(boardId,filters,columnFilters,func) {
     this.axios.post("",{
       query : `{boards(ids:[${boardId}]){id name groups {id title} columns {id title type} items {id name group {id} column_values {id text}}}}`
     }).then(function(response){

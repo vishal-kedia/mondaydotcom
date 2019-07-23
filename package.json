@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
+    "commander": "^2.20.0",
     "table": "^5.4.4"
   },
   "devDependencies": {
