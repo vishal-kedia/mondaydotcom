@@ -33,9 +33,9 @@ module.exports = function(_config) {
                 });
                 board.items.sort(function(a,b){
                     if(a.id > b.id) {
-                        return -1;
-                    } else if (a.id < b.id) {
                         return 1;
+                    } else if (a.id < b.id) {
+                        return -1;
                     } else {
                         return 0;
                     }
