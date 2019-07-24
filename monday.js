@@ -61,9 +61,17 @@ module.exports = function(_config) {
       });
       if(filters) {
         if(filters.every(function(filter){
-        	return item.column_values.some(function(_val){
-            return _val.text.includes(filter)
-        	})
+          let filterArr = filter.split(':');
+          let _filterColumnId = board.columns.filter( column => column.title.includes(filterArr[0])).map( column => column.id)[0];
+          if(_filterColumnId && filterArr.length === 2) {
+        	  return item.column_values.some(function(_val){
+              return _val.id === _filterColumnId && _val.text.includes(filterArr[1]);
+        	  })
+          } else {
+        	  return item.column_values.some(function(_val){
+              return _val.text.includes(filter)
+        	  })
+          }
         })) {
           group_tables[item.group.id].push(row);
         }
