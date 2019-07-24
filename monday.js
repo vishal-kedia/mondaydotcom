@@ -55,15 +55,15 @@ module.exports = function(_config) {
         } else if (column_id === '_id') {
 		  	  row.push(item.id);
 		    } else {
-	  var data = item.column_values.filter( column_value => column_value.id === column_id).map( column_value => column_value.text)[0];
+	        var data = item.column_values.filter( column_value => column_value.id === column_id).map( column_value => column_value.text)[0];
           row.push(data);
         }
       });
       if(filters) {
         if(filters.every(function(filter){
-        		    return item.column_values.some(function(_val){
+        	return item.column_values.some(function(_val){
             return _val.text.includes(filter)
-        	  	  })
+        	})
         })) {
           group_tables[item.group.id].push(row);
         }
